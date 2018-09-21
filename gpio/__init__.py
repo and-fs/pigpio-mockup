@@ -100,8 +100,13 @@ class GPIODummy(object):
     PUD_OFFSET = 106
 
     def __init__(self, mapfile = -1, initialize = False):
+        """
+        Initializes the GPIO instance.
+        For `mapfile` and `initialize` see set_mapfile below.
+        """
         self.mode = self.MODE_UNKNOWN
         self._warnings = True
+
         self._mapfile = None
         self.set_mapfile(mapfile, initialize)
 
@@ -228,6 +233,10 @@ class GPIODummy(object):
             self._detected_events.discard(gpio)
             self._watched_gpios.pop(gpio, None)
 
+    def __del__(self):
+        if not self._mapfile is None:
+            self._mapfile.close()            
+
     # ---- [ Official GPIO - API ] -------------------------------------------------------
 
     def setup(self, channel, direction, pull_up_down = PUD_OFF, initial = None):
@@ -273,10 +282,6 @@ class GPIODummy(object):
                 raise ValueError("Channel must be an integer")
             gpio = self._get_gpio_number(ch)
             self._cleanup_one(gpio)
-
-    def __del__(self):
-        if not self._mapfile is None:
-            self._mapfile.close()
 
     def setwarnings(self, what):
         self._warnings = bool(what)
@@ -396,7 +401,17 @@ class GPIODummy(object):
 
     # ---- [ Test API ] -------------------------------------------------------
 
-    def set_mapfile(self, mapfile, initialize = False):
+    def set_mapfile(self, mapfile, initialize: bool = False):
+        """
+        Set a mapfile for possibly sharing between processes.
+        Args:
+            - mapfile: This can be either a path to a writable physical
+                file or a fileno of an already opened file (mode 'r+b')
+            - initialize (bool): Set to `True` for cleaning up the file
+                initialize it's content. Initialize means to set the
+                directions to 255 (neither `INPUT` nor `OUTPUT`), set all
+                `PIN` values to `LOW` and all resistors to `PUD_OFF`.
+        """
         created = True
         if not self._mapfile is None:
             self._mapfile.close()
@@ -426,9 +441,19 @@ class GPIODummy(object):
         return created
 
     def allow_write(self, allow = True):
+        """
+        Sets the write mode depending on `allow`.
+        If `True` all PINs are writeable (output)
+        independent of their state without getting an exception.
+        """
         self._write_allowed = allow
 
     def write_context(self):
+        """
+        Returns a context in which writing to all PINs is
+        possible.
+        See also allow_write.
+        """
         return GPIO._allow_write(self)
 
     class _allow_write(object):
