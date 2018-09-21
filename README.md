@@ -1,4 +1,5 @@
-# pigpio-mockup
+# Raspberry Pi GPIO mockup
+
 A platform independet RPi GPIO wrapper for testing and developing in any platform that runs Python 3.
 
 How it works
@@ -88,3 +89,12 @@ with GPIO.write_context():     # important: use the write_context!
 
 # and so on
 ```
+
+# Using as a submodule
+
+To easily use this project as a submodule, just tell git to check it out into your existing master.
+For this open a terminal / command line in your project root and use the following:
+```
+git submodule add https://github.com/and-fs/pigpio-mockup.git gpio
+```
+This will check out pigpio-mockup into the gpio folder.
