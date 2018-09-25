@@ -75,8 +75,8 @@ class GPIODummy(object):
     HIGH = 1
     LOW = 0
 
-    OUTPUT = 0
-    INPUT = 1
+    OUT = 0
+    IN = 1
 
     PWM = 43
     SERIAL = 40
@@ -134,7 +134,7 @@ class GPIODummy(object):
         self._flush()
 
     def _write_direction(self, gpio, direction):
-        assert direction in (self.INPUT, self.OUTPUT), "direction has to be INPUT or OUTPUT, not %r" % (direction,)
+        assert direction in (self.IN, self.OUT), "direction has to be IN or OUT, not %r" % (direction,)
         assert (gpio >= 0) and (gpio <= 53), "GPIO has to be in range 0 .. 53, is %r" % (gpio,)
         self._write(self.DIRECTION_OFFSET + gpio, direction)
 
@@ -171,7 +171,7 @@ class GPIODummy(object):
         assert gpio >= -1 and gpio <= 53
         if gpio != -1:
             self._event_cleanup(gpio)
-            self._setup_gpio(gpio, self.INPUT, self.PUD_OFF)
+            self._setup_gpio(gpio, self.IN, self.PUD_OFF)
 
     def _setup_gpio(self, gpio, mode, pud):
         assert gpio >= -1 and gpio <= 53
@@ -183,13 +183,13 @@ class GPIODummy(object):
 
     def _output_gpio(self, gpio, value):
         assert gpio >= 0 and gpio <= 53
-        assert self._write_allowed or (self._read_direction(gpio) == self.OUTPUT)
+        assert self._write_allowed or (self._read_direction(gpio) == self.OUT)
         self._write_value(gpio, value)
 
     def _output_one(self, channel, value):
         gpio = self._get_gpio_number(channel)
-        if (self._read_direction(gpio) != self.OUTPUT) and not self._write_allowed:
-            raise RuntimeError("Cannot output to channel %d, not in OUTPUT direction!" % (channel,))
+        if (self._read_direction(gpio) != self.OUT) and not self._write_allowed:
+            raise RuntimeError("Cannot output to channel %d, not in OUT direction!" % (channel,))
         self._output_gpio(gpio, value)
 
     def _setup_one(self, gpio, direction, pull_up_down = None, initial = None):
@@ -245,10 +245,10 @@ class GPIODummy(object):
         elif not isinstance(channel, (list, tuple)):
             raise ValueError("Channel must be an integer or list/tuple of integers")
 
-        if direction == self.OUTPUT:
+        if direction == self.OUT:
             if pull_up_down != self.PUD_OFF:
                 raise ValueError("pull_up_down parameter is not valid for outputs.")
-        elif direction == self.INPUT:
+        elif direction == self.IN:
             if initial != None:
                 raise ValueError("initial parameter is not valid for inputs.")
             if pull_up_down not in (self.PUD_OFF, self.PUD_DOWN, self.PUD_UP):
@@ -268,7 +268,7 @@ class GPIODummy(object):
             for ch in self.PIN_TO_GPIO:
                 if ch == -1:
                     continue
-                self._setup_gpio(ch, self.INPUT, self.PUD_OFF)
+                self._setup_gpio(ch, self.IN, self.PUD_OFF)
             self.mode = self.MODE_UNKNOWN
             return
 
@@ -320,7 +320,7 @@ class GPIODummy(object):
 
     def input(self, channel):
         gpio = self._get_gpio_number(channel)
-        if not self._read_direction(gpio) in (self.INPUT, self.OUTPUT):
+        if not self._read_direction(gpio) in (self.IN, self.OUT):
             raise RuntimeError("You must setup() the GPIO channel first")
         return self._read_value(gpio)
 
@@ -362,7 +362,7 @@ class GPIODummy(object):
             raise TypeError("callback has to be a callable!")
         gpio = self._get_gpio_number(channel)
         direction = self._read_direction(gpio)
-        if direction != self.INPUT:
+        if direction != self.IN:
             raise RuntimeError("You must setup() the GPIO channel as input first!")
         if not edge in (self.RISING, self.FALLING, self.BOTH):
             raise ValueError("The edge must be set to RISING, FALLING or BOTH!")
@@ -409,7 +409,7 @@ class GPIODummy(object):
                 file or a fileno of an already opened file (mode 'r+b')
             - initialize (bool): Set to `True` for cleaning up the file
                 initialize it's content. Initialize means to set the
-                directions to 255 (neither `INPUT` nor `OUTPUT`), set all
+                directions to 255 (neither `IN` nor `OUT`), set all
                 `PIN` values to `LOW` and all resistors to `PUD_OFF`.
         """
         created = True
