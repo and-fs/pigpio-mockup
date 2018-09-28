@@ -1,6 +1,6 @@
 # Raspberry Pi GPIO mockup
 
-A platform independet RPi GPIO wrapper for testing and developing in any platform that runs Python 3.
+A platform independent RPi GPIO wrapper for testing and developing in any platform that runs Python 3.
 
 How it works
 ---
@@ -20,7 +20,7 @@ Example 1 (in a single process)
 from gpio import GPIO
 
 GPIO.setmode(GPIO.BOARD)    # setup to board numbering (as the header pins)
-GPIO.setup(3, GPIO.INPUT)   # setup PIN 3 (GPIO #2) as input
+GPIO.setup(3, GPIO.IN)   # setup PIN 3 (GPIO #2) as input
 
 value = GPIO.input(3)       # this will initially be 0
 assert value == GPIO.LOW, "pin should be initially LOW!"
@@ -51,7 +51,7 @@ from gpio import GPIO
 # tell the GPIO to use a physical file 'gpio.m' for I/O and to initialize it.
 GPIO.set_mapfile('gpio.m', initialize = True) 
 GPIO.setmode(GPIO.BOARD)    # setup to board numbering (as the header pins)
-GPIO.setup(3, GPIO.INPUT)   # use PIN3 for input
+GPIO.setup(3, GPIO.IN)   # use PIN3 for input
 
 def OnPinEvent(channel):
     """This is called when PIN3 changes."""
@@ -62,7 +62,7 @@ GPIO.add_event_detect(3, GPIO.BOTH, OnPinEvent)
 
 print ("Script is running, press CTRL-C to exit.")
 try:
-    while True: # loop until Keyboard-Interrupt
+    while True: # loop until Keyboard-Interrupt / SIGINT
         time.sleep(5)
 except KeyboardInterrupt:
     print ("Bye, bye.")
