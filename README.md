@@ -5,12 +5,12 @@ A platform independent RPi GPIO wrapper for testing and developing in any platfo
 How it works
 ---
 
-In this lib the GPIO is implemented as a class which defines the RPI.GPIO API with the
+In this lib the GPIO is implemented as a class which defines the RPi.GPIO API with the
 difference that input / output is done in a memory mapped file (not to any real pins).
 
-By using this technique it is possible to simulate different value on GPIO pins
+By using this technique it is possible to simulate different values on GPIO pins
 to test the behaviour of your software when those pins are changing.
-Not even in one process, be specifying a name for the memory mapped file
+Not even in one process - by specifying a name for the memory mapped file
 you can share this between different processes running in the same system.
 
 Example 1 (in a single process)
@@ -19,7 +19,7 @@ Example 1 (in a single process)
 ```python
 from gpio import GPIO
 
-GPIO.setmode(GPIO.BOARD)    # setup to board numbering (as the header pins)
+GPIO.setmode(GPIO.BOARD) # setup to board numbering (as the header pins)
 GPIO.setup(3, GPIO.IN)   # setup PIN 3 (GPIO #2) as input
 
 value = GPIO.input(3)       # this will initially be 0
@@ -97,4 +97,4 @@ For this open a terminal / command line in your project root and use the followi
 ```
 git submodule add https://github.com/and-fs/pigpio-mockup.git gpio
 ```
-This will check out pigpio-mockup into the gpio folder.
+This will check out pigpio-mockup into a `gpio` folder.
