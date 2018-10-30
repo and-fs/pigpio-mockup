@@ -404,13 +404,14 @@ class GPIODummy(object):
     def set_mapfile(self, mapfile, initialize: bool = False):
         """
         Set a mapfile for possibly sharing between processes.
-        Args:
-            - mapfile: This can be either a path to a writable physical
-                file or a fileno of an already opened file (mode 'r+b')
-            - initialize (bool): Set to `True` for cleaning up the file
-                initialize it's content. Initialize means to set the
-                directions to 255 (neither `IN` nor `OUT`), set all
-                `PIN` values to `LOW` and all resistors to `PUD_OFF`.
+
+        :param mapfile: This can be either a path to a writable physical
+            file or a fileno of an already opened file (mode 'r+b')
+
+        :param bool initialize: Set to `True` for cleaning up the file
+            initialize it's content. Initialize means to set the
+            directions to 255 (neither `IN` nor `OUT`), set all
+            `PIN` values to `LOW` and all resistors to `PUD_OFF`.
         """
         created = True
         if not self._mapfile is None:
